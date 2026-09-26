@@ -1,0 +1,71 @@
+[package]
+name = "ashlar-material"
+description = "Procedural material graphs that bake to tileable PBR texture sets. No Bevy or IO."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation = "https://docs.rs/ashlar-material"
+readme = "README.md"
+keywords = ["procedural", "texture", "material", "pbr", "gamedev"]
+categories = ["game-development", "graphics"]
+
+# docs.rs shows the KTX2 writer's supercompression, which is behind `zstd`.
+[package.metadata.docs.rs]
+all-features = true
+
+[features]
+# Zstandard supercompression for the KTX2 writer. Off by default, and the only
+# feature this crate has: the encoder is a C library, and a crate that bakes a
+# texture set or writes an uncompressed container should not compile one. The
+# step that writes assets to disk, `ashlar-content`, turns it on. Nothing on the reading side needs it: a loader decompresses, and
+# `inspect` reads a supercompressed file's claims either way.
+zstd = ["dep:zstd"]
+
+[dependencies]
+# The half of the strand story a game links: the set, the file it goes on disk
+# in, placement, the mesh builder and the card atlas. This crate keeps the
+# scatter and the relief splat — the two halves that need a graph — and
+# re-exports the rest from `strands`, so a caller's paths are the paths they
+# were.
+ashlar-strands.workspace = true
+# The vocabulary a definition is written in, shared with `ashlar`: the value a
+# parameter holds is the value a binding overrides it with, and a default
+# library ships the definitions beside the graphs they name.
+ashlar-surface.workspace = true
+glam.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+# The `zstd` feature's encoder, and nothing else in the crate touches it. See
+# the workspace table for why the C library rather than a Rust one.
+zstd = { workspace = true, optional = true }
+
+# A clock for the bake's report in a browser, where `std::time::Instant::now`
+# panics. The version Bevy 0.19.1 already pins, so a web build gets no second
+# copy; every other target reads the standard library's.
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-time = "1.1.0"
+
+[dev-dependencies]
+ron.workspace = true
+proptest.workspace = true
+# Reads the KTX2 files this crate writes, so the round trip is checked against
+# somebody else's parser rather than against the writer's own idea of the
+# container. Test-only on purpose: writing needs no dependency, and this is the
+# same version Bevy's own KTX2 loader parses with.
+ktx2.workspace = true
+# Decompresses the levels of a supercompressed file in the round-trip test, so
+# what checks the writer is a decoder rather than the encoder run backwards.
+# Unconditional here, unlike the dependency above: a dev-dependency cannot be
+# optional, and the tests that use it are behind the same `zstd` feature.
+zstd.workspace = true
+# Parses and validates every module the WGSL emitter writes, at the version
+# Bevy pins, so the shader backend is checked by the same front end the renderer
+# will run it through.
+naga.workspace = true
+
+[lints]
+workspace = true

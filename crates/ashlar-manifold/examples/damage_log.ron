@@ -1,0 +1,50 @@
+[
+    (
+        solid: (
+            shape: Cuboid(
+                size: (1.0, 1.0, 1.0),
+            ),
+            pose: (
+                translation: (0.0, 0.0, 0.0),
+                rotation: (0.0, 0.0, 0.0, 1.0),
+            ),
+        ),
+        pose: (
+            translation: (0.2, 1.5, -0.35),
+            rotation: (0.0, 0.0, 0.0, 1.0),
+        ),
+        slot: "rubble",
+    ),
+    (
+        solid: (
+            shape: Cuboid(
+                size: (1.0, 1.0, 1.0),
+            ),
+            pose: (
+                translation: (0.0, 0.0, 0.0),
+                rotation: (0.0, 0.0, 0.0, 1.0),
+            ),
+        ),
+        pose: (
+            translation: (8.2, 1.5, -0.35),
+            rotation: (0.0, 0.0, 0.0, 1.0),
+        ),
+        slot: "rubble",
+    ),
+    (
+        solid: (
+            shape: Cuboid(
+                size: (1.0, 1.0, 1.0),
+            ),
+            pose: (
+                translation: (0.0, 0.0, 0.0),
+                rotation: (0.0, 0.0, 0.0, 1.0),
+            ),
+        ),
+        pose: (
+            translation: (20.0, 1.5, 20.0),
+            rotation: (0.0, 0.0, 0.0, 1.0),
+        ),
+        slot: "rubble",
+    ),
+]

@@ -1,0 +1,49 @@
+# Cargo configuration for builds run inside this workspace. Cargo reads it for
+# any `cargo` invocation from the workspace root or below.
+
+# **What it buys.** The bake's inner loop is bilinear samples and floors. On the
+# bare `x86-64` baseline every `mul_add` is a call into `compiler_builtins`'
+# `fmaf` and every `f32::floor` a call to its `floorf`; with these two features
+# rustc emits one `vfmadd` and one `roundss` instead, and the surrounding strip
+# loops vectorise because the calls are gone. Measured 2026-09-20 at 2048 on
+# eight threads, interleaved: soi-cobblestone 13.62 s -> 11.68 s, brick 3.72 s
+# -> 3.16 s, about -14% on both.
+#
+# **What it does not change: a baked byte.** A hardware FMA and a correctly
+# rounded `fmaf` are the same number, and `roundss` and a correct `floorf` are
+# the same floor, so the goldens, the shipped-resolution cases, `just
+# conformance` and `just draw` all pass unaltered and the two reference digests
+# are the ones they were. That is the whole reason this is a build flag rather
+# than a decision about `ashlar-material`: it buys time and costs nothing a
+# reader of the textures could see.
+#
+# **What it costs: the machines a build from this workspace runs on.** It raises
+# the x86-64 baseline to `x86-64-v2` plus FMA — roughly Haswell (2013) on Intel
+# and Excavator (2015) on AMD. A binary built here does not run slowly on
+# something older, it dies on SIGILL at the first `roundss`. Build for such a
+# machine with the flags off for the run: `RUSTFLAGS="-C target-feature=-sse4.1,-fma" cargo build`.
+#
+# **What it does not reach: anything downstream.** Cargo reads this file for
+# builds run in *this* workspace, so a game depending on the published
+# `ashlar-material` compiles it at that game's own baseline, bakes the same
+# bytes and takes the extra 14%. Nothing here ships inside the crate, and the
+# `cfg` scope is why an aarch64 build — a Mac, a phone — is untouched rather
+# than refused.
+#
+# **How to lose it by accident.** `RUSTFLAGS` in the environment *replaces*
+# these flags; cargo does not append the two lists. Anything that exports
+# `RUSTFLAGS` therefore drops the target features silently, and the only symptom
+# is a slower bake. `.github/workflows/ci.yml` sets `RUSTFLAGS: -D warnings`
+# and repeats the features beside it, and the `bfd` link workaround for the
+# kernel below has to be spelled the same way to keep them.
+# `RUSTDOCFLAGS` is a separate variable and does not do this, so `just doc` is
+# fine.
+[target.'cfg(target_arch = "x86_64")']
+rustflags = ["-C", "target-feature=+sse4.1,+fma"]
+
+# Compiler selection is left to the platform and the caller. Do not force
+# Unix paths here: that breaks Windows, NixOS and cross-compilation, and a
+# user's ~/.cargo/config.toml cannot override this workspace's configuration.
+# Anaconda's GCC can produce a Manifold kernel that crashes under rust-lld;
+# use the system compiler explicitly in that environment. See
+# docs/guide/recipes.md, "Native build prerequisite", for the workaround.

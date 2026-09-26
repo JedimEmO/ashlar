@@ -1,0 +1,31 @@
+[package]
+name = "ashlar-showcase"
+description = "Example building content: the kits and scenes the ashlar preview, web demo and tests draw."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[dependencies]
+ashlar.workspace = true
+# The showcase is the one member that depends on both `ashlar` and
+# `ashlar-material`, which is the layering the design asks for: neither of those
+# two knows the other exists. The graphs are baked when a scene registers them,
+# so no encoder is needed here; the content step that writes files enables it.
+ashlar-material.workspace = true
+glam.workspace = true
+
+[dev-dependencies]
+# The content needs no kernel; checking that its declared collision proxies
+# cover what the old hand-typed tables covered needs an evaluated solid.
+ashlar-manifold.workspace = true
+# The `content` and `export-materials` examples are the content step, over
+# this content.
+ashlar-content.workspace = true
+anyhow.workspace = true
+ron.workspace = true
+
+[lints]
+workspace = true

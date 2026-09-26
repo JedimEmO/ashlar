@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ashlar — procedural architecture for Rust games</title>
+    <meta name="description" content="Describe buildings as Rust data and materials as Rust graphs; a content step bakes both into files your Bevy game loads with levels of detail, collision and rooms." />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0c0e12; --panel: #14171d; --line: #262a33;
+        --ink: #dcd8cf; --muted: #8e939c; --accent: #d6b270; --accent-ink: #1a1408;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; background: var(--bg); color: var(--ink);
+        font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+      a { color: var(--accent); }
+      main { max-width: 60rem; margin: 0 auto; padding: 4.5rem 1.25rem 3rem; }
+      header { display: grid; grid-template-columns: auto 1fr; gap: 1.4rem; align-items: center; }
+      /* A dressed stone in coursed rows: the thing the crate is named after. */
+      .mark { width: 88px; height: 88px; }
+      h1 { margin: 0; font-size: 2.8rem; letter-spacing: 0.03em; color: var(--accent); line-height: 1.1; }
+      .tagline { margin: 0.2rem 0 0; font-size: 1.2rem; color: var(--ink); }
+      .lede { margin: 2.2rem 0 0; color: var(--muted); max-width: 44rem; }
+      .actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 2.2rem 0 3rem; }
+      .actions a { text-decoration: none; padding: 0.7rem 1.2rem; border-radius: 8px;
+        border: 1px solid var(--line); background: var(--panel); color: var(--ink); font-weight: 600; }
+      .actions a.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+      .actions a:hover { border-color: var(--accent); }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; }
+      .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 1.1rem 1.2rem; }
+      .card h2 { margin: 0 0 0.4rem; font-size: 1.05rem; color: var(--ink); }
+      .card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+      pre { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.2rem;
+        overflow-x: auto; font-size: 0.88rem; line-height: 1.5; margin: 2.5rem 0 0; }
+      code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+      .k { color: #c792ea; } .s { color: #c3e88d; } .t { color: #82aaff; } .c { color: #6b7280; }
+      footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+      @media (max-width: 34rem) { header { grid-template-columns: 1fr; } h1 { font-size: 2.2rem; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <svg class="mark" viewBox="0 0 88 88" aria-hidden="true">
+          <g fill="none" stroke="#d6b270" stroke-width="2">
+            <rect x="4" y="8" width="38" height="20" rx="2" />
+            <rect x="46" y="8" width="38" height="20" rx="2" />
+            <rect x="4" y="34" width="18" height="20" rx="2" />
+            <rect x="26" y="34" width="38" height="20" rx="2" fill="#d6b270" fill-opacity="0.18" />
+            <rect x="68" y="34" width="16" height="20" rx="2" />
+            <rect x="4" y="60" width="38" height="20" rx="2" />
+            <rect x="46" y="60" width="38" height="20" rx="2" />
+          </g>
+        </svg>
+        <div>
+          <h1>ashlar</h1>
+          <p class="tagline">Procedural architecture for Rust games.</p>
+        </div>
+      </header>
+
+      <p class="lede">
+        Describe a building as ordinary Rust data and its materials as Rust graphs.
+        A content step bakes both into files, and your Bevy game loads them with levels of detail,
+        collision proxies and rooms — no macro language, no style built into the engine,
+        and no geometry kernel or graph engine in the game you ship.
+      </p>
+
+      <nav class="actions">
+        <a class="primary" href="demo/">Explore the demo</a>
+        <a href="book/">Read the manual</a>
+        <a href="api/ashlar/index.html">API docs</a>
+        <a href="https://github.com/JedimEmO/ashlar">Source on GitHub</a>
+      </nav>
+
+      <section class="grid">
+        <div class="card">
+          <h2>Scenes</h2>
+          <p>A dark city by night, a corporate courtyard, a house you can cut open storey by storey,
+            a sci-fi colony — each a baked <code>.ashlar</code> file drawn with its level-of-detail bands,
+            exactly as a game loads it.</p>
+        </div>
+        <div class="card">
+          <h2>Materials</h2>
+          <p>The default library of forty surfaces on a sphere and a wall. Move a parameter and the
+            graph re-bakes in your browser, on one thread, in a few seconds.</p>
+        </div>
+        <div class="card">
+          <h2>Two halves</h2>
+          <p>The content step links the mesher and the material engine; the game links neither.
+            <code>ashlar-bevy</code> with default features loads files and nothing else.</p>
+        </div>
+      </section>
+
+<pre><code><span class="k">let</span> building = <span class="t">Building</span>::builder(<span class="s">"example:screen"</span>)
+    .part(panel)
+    .material(<span class="s">"surface"</span>, <span class="s">"library:painted-metal"</span>)
+    .instance(<span class="t">Instance</span>::new(<span class="s">"left"</span>, <span class="s">"example:panel"</span>))
+    .instance(<span class="t">Instance</span>::new(<span class="s">"right"</span>, <span class="s">"example:panel"</span>).placed(<span class="t">Pose</span>::at([<span class="t">4.0</span>, <span class="t">0.0</span>, <span class="t">0.0</span>])))
+    .build()?;
+<span class="c">// The content step meshes it at every level of detail; the game spawns it with one component.</span></code></pre>
+
+      <footer>
+        MIT or Apache-2.0. Built with <a href="https://bevyengine.org">Bevy</a> and
+        <a href="https://github.com/elalish/manifold">Manifold</a>.
+        The demo needs a browser with WebGL2.
+      </footer>
+    </main>
+  </body>
+</html>

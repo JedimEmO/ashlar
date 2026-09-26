@@ -1,0 +1,35 @@
+[package]
+name = "ashlar-manifold"
+description = "Manifold adapter for renderer-independent building meshes."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation = "https://docs.rs/ashlar-manifold"
+readme = "README.md"
+keywords = ["procedural", "architecture", "csg", "mesh", "gamedev"]
+categories = ["game-development", "graphics"]
+
+# docs.rs builds offline, and the kernel's first build clones and compiles
+# upstream Manifold. `manifold-csg-sys` returns from its build script when
+# DOCS_RS is set, and rustdoc links nothing, so the documentation builds there
+# with no vendored source and no C++ toolchain. Verified with
+# `DOCS_RS=1 RUSTDOCFLAGS="--cfg docsrs" cargo doc -p ashlar-manifold`.
+[package.metadata.docs.rs]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[dependencies]
+ashlar.workspace = true
+glam.workspace = true
+manifold-csg.workspace = true
+
+# `damage_server` reads a `DamageLog` from RON so that a log can be handed to a
+# server the way the wire format intends. Test- and example-only.
+[dev-dependencies]
+ron.workspace = true
+
+[lints]
+workspace = true

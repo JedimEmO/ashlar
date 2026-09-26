@@ -1,0 +1,27 @@
+[package]
+name = "ashlar-strands"
+description = "Strand geometry — grass, fur, moss — read from a baked set, planted on a mesh and built into triangles. No graph engine, no Bevy, no IO."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation = "https://docs.rs/ashlar-strands"
+readme = "README.md"
+keywords = ["procedural", "grass", "geometry", "gamedev", "graphics"]
+categories = ["game-development", "graphics"]
+
+[dependencies]
+glam.workspace = true
+thiserror.workspace = true
+# `StrandProfile` is a field of a `StrandLayer`, which is part of a material
+# graph and so part of a RON file. The type belongs here, beside the geometry
+# that reads it, and `ashlar-material` re-exports it — so serde is the price of
+# putting it on the right side of the split. It costs a game nothing: `ashlar`,
+# which every game already links, pulls the same crate for its own libraries.
+serde.workspace = true
+
+[lints]
+workspace = true

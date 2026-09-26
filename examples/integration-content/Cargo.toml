@@ -1,0 +1,20 @@
+[package]
+name = "integration-content"
+description = "The template content step: a game's buildings and materials, baked to files."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+# A game copies this crate and the one beside it. This is the tool half: it
+# links the geometry kernel and the material graph engine, and runs on a
+# developer's machine or a build server, never in the game.
+[dependencies]
+ashlar.workspace = true
+ashlar-content.workspace = true
+ashlar-material.workspace = true
+anyhow.workspace = true
+
+[lints]
+workspace = true

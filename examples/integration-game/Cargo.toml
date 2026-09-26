@@ -1,0 +1,18 @@
+[package]
+name = "integration-game"
+description = "The template game: baked ashlar content loaded and drawn with levels of detail."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+# The game half. `ashlar-bevy` with no features: no geometry kernel, no
+# material graph engine, no C++ toolchain. `cargo tree -e normal -p
+# integration-game` has neither `ashlar-manifold` nor `ashlar-material` in it.
+[dependencies]
+ashlar-bevy.workspace = true
+bevy = { workspace = true, features = ["default"] }
+
+[lints]
+workspace = true

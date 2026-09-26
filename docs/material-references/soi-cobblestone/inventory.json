@@ -1,0 +1,1920 @@
+{
+  "source": "https://soi.itch.io/substance-designer-material-pack-1",
+  "retrieved": "2026-09-16",
+  "license": "CC0-1.0 (author asset listing)",
+  "archive_sha256": "49b7f8abcab7e3b8e5973d3475628ed73d26fb5a4769f024fab22c1af04fc7da",
+  "files": {
+    "1.sbsprs": "cf5deea0c76a8b088796490585a7faf604c8ae1164e9e9d1bfeeb13591f2b61e",
+    "2.sbsprs": "5e5d264e6a7c43df97fdf105f7e38ea671f3490efb730c561716acc0b05ce172",
+    "3.sbsprs": "f4cee4e56c04ecf8ab4cdca9b6cc541dc2ca014062024f744f340508d1497d49",
+    "Soi_CobbleStone.sbs": "b7ca34838d84d3b35cc15ce74288735213f312acfff004fbc9b6a724ddf5fd82"
+  },
+  "graph": "CobbleStone",
+  "format_version": "1.1.0.201710",
+  "designer_build": null,
+  "node_count": 164,
+  "node_counts": {
+    "auto_levels": 2,
+    "basecolor_metallic_roughness_converter": 1,
+    "bevel": 1,
+    "blend": 34,
+    "blur_hq_grayscale": 7,
+    "bnw_spots_1": 2,
+    "bnw_spots_2": 4,
+    "bnw_spots_3": 2,
+    "cells_4": 1,
+    "clouds_1": 1,
+    "compOutputBridge": 13,
+    "curvature_smooth": 3,
+    "directionalwarp": 2,
+    "dirt_2": 1,
+    "edge_detect": 1,
+    "fractal_sum_2": 1,
+    "gradient": 9,
+    "gradient_linear_1": 1,
+    "grunge_map_002": 1,
+    "grunge_map_005": 1,
+    "grunge_map_010": 2,
+    "grunge_map_013": 4,
+    "hbao": 1,
+    "height_blend": 1,
+    "highpass_grayscale": 1,
+    "histogram_range": 5,
+    "histogram_scan": 7,
+    "hsl": 4,
+    "invert_grayscale": 4,
+    "levels": 9,
+    "make_it_tile_patch_grayscale": 1,
+    "mg_dirt": 1,
+    "mg_mask_builder_2": 1,
+    "moisture_noise": 1,
+    "normal_sobel_2": 1,
+    "perlin_noise_zoom": 6,
+    "polygon_2": 1,
+    "replace_color": 3,
+    "rgb-a_merge": 1,
+    "rgba_merge": 3,
+    "rgba_split": 1,
+    "shape": 1,
+    "sharpen": 3,
+    "slope_blur_grayscale": 6,
+    "splatter": 1,
+    "tile_sampler": 2,
+    "uniform": 2,
+    "warp": 3
+  },
+  "parameters": [
+    "Stone_Sloping",
+    "Noise_Major",
+    "Noise_Middle",
+    "Noise_Fine",
+    "Noise_Pits",
+    "Grout_Noisiness",
+    "Grout_Height",
+    "Stone_Color",
+    "Grout_Color",
+    "Stone_TileX",
+    "Stone_TileY",
+    "Stone_Warping",
+    "Stone_EdgeTightness",
+    "Stone_EgdeNoisiness",
+    "Stone_EdgeBig",
+    "Stone_EdgeMedium",
+    "Stone_EdgeSmall",
+    "Roughness_Noisiness",
+    "Roughness_Base",
+    "Roughness_TopVariation",
+    "Roughness_TopShine",
+    "Roughness_Edge",
+    "Roughness_Dirt",
+    "Roughness_GroutBase",
+    "Roughness_Sharpness",
+    "Stone_ColorVariation",
+    "Stone_DirtColor",
+    "Color_Sharpness",
+    "Dirt_Level",
+    "Stone_Offset",
+    "Normal_Intensity"
+  ],
+  "dependencies": [
+    "sbs://auto_levels.sbs",
+    "sbs://polygon_2.sbs",
+    "sbs://shape.sbs",
+    "sbs://perlin_noise_zoom.sbs",
+    "sbs://slope_blur.sbs",
+    "sbs://splatter.sbs",
+    "sbs://moisture_noise.sbs",
+    "sbs://blur_hq.sbs",
+    "sbs://histogram_range.sbs",
+    "sbs://height_blend.sbs",
+    "sbs://normal_sobel.sbs",
+    "sbs://tile_sampler.sbs",
+    "sbs://edge_detect.sbs",
+    "sbs://bevel.sbs",
+    "sbs://invert.sbs",
+    "sbs://bnw_spots_1.sbs",
+    "sbs://histogram_scan.sbs",
+    "sbs://gradient_linear_1.sbs",
+    "sbs://bnw_spots_2.sbs",
+    "sbs://bnw_spots_3.sbs",
+    "sbs://dirt_2.sbs",
+    "sbs://clouds_1.sbs",
+    "sbs://cells_4.sbs",
+    "sbs://hbao_2.sbs",
+    "sbs://grunge_map_002.sbs",
+    "sbs://make_it_tile_patch_grayscale.sbs",
+    "sbs://grunge_map_013.sbs",
+    "sbs://replace_color.sbs",
+    "sbs://grunge_map_010.sbs",
+    "sbs://grunge_map_005.sbs",
+    "sbs://curvature_smooth.sbs",
+    "sbs://highpass.sbs",
+    "sbs://mg_dirt.sbs",
+    "sbs://mg_mask_builder.sbs",
+    "sbs://fractal_sum_2.sbs",
+    "sbs://rgba_merge.sbs",
+    "sbs://rgb-a_merge.sbs",
+    "sbs://rgba_split.sbs",
+    "sbs://pbr_converter.sbs"
+  ],
+  "nodes": [
+    {
+      "uid": "1294139771",
+      "kind": "levels",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294186292"
+        }
+      ]
+    },
+    {
+      "uid": "1294139909",
+      "kind": "auto_levels",
+      "inputs": [
+        {
+          "socket": "Input",
+          "node": "1294139771"
+        }
+      ]
+    },
+    {
+      "uid": "1294159383",
+      "kind": "polygon_2",
+      "inputs": []
+    },
+    {
+      "uid": "1294159473",
+      "kind": "auto_levels",
+      "inputs": [
+        {
+          "socket": "Input",
+          "node": "1294159383"
+        }
+      ]
+    },
+    {
+      "uid": "1294159779",
+      "kind": "shape",
+      "inputs": []
+    },
+    {
+      "uid": "1294159819",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294159473"
+        },
+        {
+          "socket": "source",
+          "node": "1294159779"
+        }
+      ]
+    },
+    {
+      "uid": "1294160035",
+      "kind": "directionalwarp",
+      "inputs": [
+        {
+          "socket": "inputintensity",
+          "node": "1294159819"
+        },
+        {
+          "socket": "input1",
+          "node": "1294159819"
+        }
+      ]
+    },
+    {
+      "uid": "1294160217",
+      "kind": "perlin_noise_zoom",
+      "inputs": []
+    },
+    {
+      "uid": "1294160226",
+      "kind": "slope_blur_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294160035"
+        },
+        {
+          "socket": "Effect",
+          "node": "1294160217"
+        }
+      ]
+    },
+    {
+      "uid": "1294161249",
+      "kind": "slope_blur_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294160226"
+        },
+        {
+          "socket": "Effect",
+          "node": "1294161268"
+        }
+      ]
+    },
+    {
+      "uid": "1294161268",
+      "kind": "perlin_noise_zoom",
+      "inputs": []
+    },
+    {
+      "uid": "1294162705",
+      "kind": "levels",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294161249"
+        }
+      ]
+    },
+    {
+      "uid": "1294177255",
+      "kind": "splatter",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294162705"
+        }
+      ]
+    },
+    {
+      "uid": "1294181118",
+      "kind": "normal_sobel_2",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294139771"
+        }
+      ]
+    },
+    {
+      "uid": "1294186292",
+      "kind": "height_blend",
+      "inputs": [
+        {
+          "socket": "height_bottom",
+          "node": "1294375030"
+        },
+        {
+          "socket": "height_top",
+          "node": "1294212340"
+        }
+      ]
+    },
+    {
+      "uid": "1294158122",
+      "kind": "tile_sampler",
+      "inputs": []
+    },
+    {
+      "uid": "1294163021",
+      "kind": "edge_detect",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294217226"
+        }
+      ]
+    },
+    {
+      "uid": "1294177920",
+      "kind": "bevel",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294163021"
+        }
+      ]
+    },
+    {
+      "uid": "1294184039",
+      "kind": "invert_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294177920"
+        }
+      ]
+    },
+    {
+      "uid": "1294184054",
+      "kind": "blur_hq_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294163021"
+        }
+      ]
+    },
+    {
+      "uid": "1294184062",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294184054"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294184039"
+        },
+        {
+          "socket": "source",
+          "node": "1294187223"
+        }
+      ]
+    },
+    {
+      "uid": "1294184115",
+      "kind": "bnw_spots_1",
+      "inputs": []
+    },
+    {
+      "uid": "1294184150",
+      "kind": "histogram_scan",
+      "inputs": [
+        {
+          "socket": "Input_1",
+          "node": "1294184062"
+        }
+      ]
+    },
+    {
+      "uid": "1294187223",
+      "kind": "blur_hq_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294184115"
+        }
+      ]
+    },
+    {
+      "uid": "1294199468",
+      "kind": "blur_hq_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294184150"
+        }
+      ]
+    },
+    {
+      "uid": "1294202766",
+      "kind": "perlin_noise_zoom",
+      "inputs": []
+    },
+    {
+      "uid": "1294202780",
+      "kind": "slope_blur_grayscale",
+      "inputs": [
+        {
+          "socket": "Effect",
+          "node": "1294202766"
+        },
+        {
+          "socket": "Source",
+          "node": "1294199468"
+        }
+      ]
+    },
+    {
+      "uid": "1294202881",
+      "kind": "perlin_noise_zoom",
+      "inputs": []
+    },
+    {
+      "uid": "1294202882",
+      "kind": "slope_blur_grayscale",
+      "inputs": [
+        {
+          "socket": "Effect",
+          "node": "1294202881"
+        },
+        {
+          "socket": "Source",
+          "node": "1294199468"
+        }
+      ]
+    },
+    {
+      "uid": "1294202968",
+      "kind": "moisture_noise",
+      "inputs": []
+    },
+    {
+      "uid": "1294202973",
+      "kind": "slope_blur_grayscale",
+      "inputs": [
+        {
+          "socket": "Effect",
+          "node": "1294203012"
+        },
+        {
+          "socket": "Source",
+          "node": "1294199468"
+        }
+      ]
+    },
+    {
+      "uid": "1294203012",
+      "kind": "blur_hq_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294202968"
+        }
+      ]
+    },
+    {
+      "uid": "1294203053",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294202780"
+        },
+        {
+          "socket": "destination",
+          "node": "1294257769"
+        }
+      ]
+    },
+    {
+      "uid": "1294203970",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294203053"
+        },
+        {
+          "socket": "source",
+          "node": "1294202882"
+        }
+      ]
+    },
+    {
+      "uid": "1294204946",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294203970"
+        },
+        {
+          "socket": "source",
+          "node": "1294202973"
+        }
+      ]
+    },
+    {
+      "uid": "1294208390",
+      "kind": "tile_sampler",
+      "inputs": [
+        {
+          "socket": "pattern_input",
+          "node": "1294208406"
+        }
+      ]
+    },
+    {
+      "uid": "1294208406",
+      "kind": "gradient_linear_1",
+      "inputs": []
+    },
+    {
+      "uid": "1294208556",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294204946"
+        },
+        {
+          "socket": "source",
+          "node": "1295112500"
+        }
+      ]
+    },
+    {
+      "uid": "1294209188",
+      "kind": "bnw_spots_2",
+      "inputs": []
+    },
+    {
+      "uid": "1294209216",
+      "kind": "blur_hq_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294209188"
+        }
+      ]
+    },
+    {
+      "uid": "1294209230",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294209216"
+        },
+        {
+          "socket": "destination",
+          "node": "1294208556"
+        }
+      ]
+    },
+    {
+      "uid": "1294209425",
+      "kind": "bnw_spots_3",
+      "inputs": []
+    },
+    {
+      "uid": "1294209431",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294209230"
+        },
+        {
+          "socket": "source",
+          "node": "1294209425"
+        }
+      ]
+    },
+    {
+      "uid": "1294210847",
+      "kind": "dirt_2",
+      "inputs": []
+    },
+    {
+      "uid": "1294210857",
+      "kind": "blur_hq_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294210847"
+        }
+      ]
+    },
+    {
+      "uid": "1294210868",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294209431"
+        },
+        {
+          "socket": "source",
+          "node": "1294210857"
+        }
+      ]
+    },
+    {
+      "uid": "1294212276",
+      "kind": "bnw_spots_3",
+      "inputs": []
+    },
+    {
+      "uid": "1294212298",
+      "kind": "clouds_1",
+      "inputs": []
+    },
+    {
+      "uid": "1294212307",
+      "kind": "perlin_noise_zoom",
+      "inputs": []
+    },
+    {
+      "uid": "1294212313",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294212298"
+        },
+        {
+          "socket": "source",
+          "node": "1294212276"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294212307"
+        }
+      ]
+    },
+    {
+      "uid": "1294212340",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294212313"
+        },
+        {
+          "socket": "destination",
+          "node": "1294210868"
+        }
+      ]
+    },
+    {
+      "uid": "1294217152",
+      "kind": "cells_4",
+      "inputs": []
+    },
+    {
+      "uid": "1294217160",
+      "kind": "blur_hq_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294217152"
+        }
+      ]
+    },
+    {
+      "uid": "1294217226",
+      "kind": "warp",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294158122"
+        },
+        {
+          "socket": "inputgradient",
+          "node": "1294217160"
+        }
+      ]
+    },
+    {
+      "uid": "1294231865",
+      "kind": "histogram_range",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294177255"
+        }
+      ]
+    },
+    {
+      "uid": "1294232671",
+      "kind": "histogram_range",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294273868"
+        }
+      ]
+    },
+    {
+      "uid": "1294232687",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294232671"
+        },
+        {
+          "socket": "destination",
+          "node": "1294231865"
+        }
+      ]
+    },
+    {
+      "uid": "1294233342",
+      "kind": "histogram_range",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294273868"
+        }
+      ]
+    },
+    {
+      "uid": "1294238211",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294233342"
+        },
+        {
+          "socket": "source",
+          "node": "1294232687"
+        }
+      ]
+    },
+    {
+      "uid": "1294257769",
+      "kind": "slope_blur_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294199468"
+        },
+        {
+          "socket": "Effect",
+          "node": "1294199468"
+        }
+      ]
+    },
+    {
+      "uid": "1294273868",
+      "kind": "bnw_spots_2",
+      "inputs": []
+    },
+    {
+      "uid": "1294280490",
+      "kind": "hbao",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294139771"
+        }
+      ]
+    },
+    {
+      "uid": "1294375025",
+      "kind": "perlin_noise_zoom",
+      "inputs": []
+    },
+    {
+      "uid": "1294375030",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294238211"
+        },
+        {
+          "socket": "source",
+          "node": "1294375025"
+        }
+      ]
+    },
+    {
+      "uid": "1294653964",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294656643"
+        },
+        {
+          "socket": "destination",
+          "node": "1294657461"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294656580"
+        }
+      ]
+    },
+    {
+      "uid": "1294653967",
+      "kind": "gradient",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294655384"
+        }
+      ]
+    },
+    {
+      "uid": "1294653971",
+      "kind": "bnw_spots_1",
+      "inputs": []
+    },
+    {
+      "uid": "1294653972",
+      "kind": "warp",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294653967"
+        },
+        {
+          "socket": "inputgradient",
+          "node": "1294653971"
+        }
+      ]
+    },
+    {
+      "uid": "1294655384",
+      "kind": "grunge_map_002",
+      "inputs": []
+    },
+    {
+      "uid": "1294656580",
+      "kind": "grunge_map_013",
+      "inputs": []
+    },
+    {
+      "uid": "1294656643",
+      "kind": "gradient",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294656580"
+        }
+      ]
+    },
+    {
+      "uid": "1294657461",
+      "kind": "replace_color",
+      "inputs": [
+        {
+          "socket": "Input",
+          "node": "1294653972"
+        }
+      ]
+    },
+    {
+      "uid": "1294717147",
+      "kind": "grunge_map_010",
+      "inputs": []
+    },
+    {
+      "uid": "1294721014",
+      "kind": "gradient",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294717147"
+        }
+      ]
+    },
+    {
+      "uid": "1294722324",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294653964"
+        },
+        {
+          "socket": "source",
+          "node": "1294721014"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294717147"
+        }
+      ]
+    },
+    {
+      "uid": "1294725022",
+      "kind": "make_it_tile_patch_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294725293"
+        }
+      ]
+    },
+    {
+      "uid": "1294725023",
+      "kind": "hsl",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294722324"
+        }
+      ]
+    },
+    {
+      "uid": "1294725025",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294725023"
+        },
+        {
+          "socket": "destination",
+          "node": "1294722324"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294731662"
+        }
+      ]
+    },
+    {
+      "uid": "1294725293",
+      "kind": "grunge_map_005",
+      "inputs": []
+    },
+    {
+      "uid": "1294731400",
+      "kind": "directionalwarp",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294725025"
+        },
+        {
+          "socket": "inputintensity",
+          "node": "1294217226"
+        }
+      ]
+    },
+    {
+      "uid": "1294731662",
+      "kind": "sharpen",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294725022"
+        }
+      ]
+    },
+    {
+      "uid": "1294732107",
+      "kind": "gradient",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294217226"
+        }
+      ]
+    },
+    {
+      "uid": "1294732235",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294731400"
+        },
+        {
+          "socket": "source",
+          "node": "1294732107"
+        }
+      ]
+    },
+    {
+      "uid": "1294732412",
+      "kind": "gradient",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294273868"
+        }
+      ]
+    },
+    {
+      "uid": "1294732467",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294739229"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294742450"
+        },
+        {
+          "socket": "destination",
+          "node": "1294893879"
+        }
+      ]
+    },
+    {
+      "uid": "1294732484",
+      "kind": "histogram_scan",
+      "inputs": [
+        {
+          "socket": "Input_1",
+          "node": "1294186292"
+        }
+      ]
+    },
+    {
+      "uid": "1294732562",
+      "kind": "grunge_map_010",
+      "inputs": []
+    },
+    {
+      "uid": "1294732563",
+      "kind": "gradient",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294732562"
+        }
+      ]
+    },
+    {
+      "uid": "1294733851",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294732563"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294732562"
+        },
+        {
+          "socket": "destination",
+          "node": "1294732412"
+        }
+      ]
+    },
+    {
+      "uid": "1294734019",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294733851"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294734108"
+        },
+        {
+          "socket": "source",
+          "node": "1294734026"
+        }
+      ]
+    },
+    {
+      "uid": "1294734026",
+      "kind": "gradient",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294734027"
+        }
+      ]
+    },
+    {
+      "uid": "1294734027",
+      "kind": "grunge_map_013",
+      "inputs": []
+    },
+    {
+      "uid": "1294734108",
+      "kind": "histogram_scan",
+      "inputs": [
+        {
+          "socket": "Input_1",
+          "node": "1294177255"
+        }
+      ]
+    },
+    {
+      "uid": "1294738141",
+      "kind": "curvature_smooth",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294181118"
+        }
+      ]
+    },
+    {
+      "uid": "1294738172",
+      "kind": "highpass_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294280490"
+        }
+      ]
+    },
+    {
+      "uid": "1294738236",
+      "kind": "histogram_scan",
+      "inputs": [
+        {
+          "socket": "Input_1",
+          "node": "1294738172"
+        }
+      ]
+    },
+    {
+      "uid": "1294738564",
+      "kind": "levels",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294738236"
+        }
+      ]
+    },
+    {
+      "uid": "1294738642",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "opacity",
+          "node": "1294738564"
+        },
+        {
+          "socket": "destination",
+          "node": "1294732235"
+        },
+        {
+          "socket": "source",
+          "node": "1294738655"
+        }
+      ]
+    },
+    {
+      "uid": "1294738655",
+      "kind": "hsl",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294732235"
+        }
+      ]
+    },
+    {
+      "uid": "1294738744",
+      "kind": "histogram_scan",
+      "inputs": [
+        {
+          "socket": "Input_1",
+          "node": "1294738141"
+        }
+      ]
+    },
+    {
+      "uid": "1294738801",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294738642"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294738744"
+        },
+        {
+          "socket": "source",
+          "node": "1294738817"
+        }
+      ]
+    },
+    {
+      "uid": "1294738817",
+      "kind": "hsl",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294738642"
+        }
+      ]
+    },
+    {
+      "uid": "1294739054",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294204946"
+        },
+        {
+          "socket": "source",
+          "node": "1294257769"
+        }
+      ]
+    },
+    {
+      "uid": "1294739081",
+      "kind": "histogram_scan",
+      "inputs": [
+        {
+          "socket": "Input_1",
+          "node": "1294739054"
+        }
+      ]
+    },
+    {
+      "uid": "1294739229",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294738801"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294739240"
+        },
+        {
+          "socket": "source",
+          "node": "1294739318"
+        }
+      ]
+    },
+    {
+      "uid": "1294739240",
+      "kind": "invert_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1294739081"
+        }
+      ]
+    },
+    {
+      "uid": "1294739318",
+      "kind": "hsl",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294738801"
+        }
+      ]
+    },
+    {
+      "uid": "1294739682",
+      "kind": "mg_dirt",
+      "inputs": [
+        {
+          "socket": "curvature",
+          "node": "1294741002"
+        },
+        {
+          "socket": "ambient_occlusion",
+          "node": "1294280490"
+        }
+      ]
+    },
+    {
+      "uid": "1294741002",
+      "kind": "curvature_smooth",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294181118"
+        }
+      ]
+    },
+    {
+      "uid": "1294742450",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294739682"
+        },
+        {
+          "socket": "destination",
+          "node": "1294732484"
+        }
+      ]
+    },
+    {
+      "uid": "1294791219",
+      "kind": "curvature_smooth",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294181118"
+        }
+      ]
+    },
+    {
+      "uid": "1294800434",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294732467"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294806362"
+        },
+        {
+          "socket": "source",
+          "node": "1295095973"
+        }
+      ]
+    },
+    {
+      "uid": "1294800452",
+      "kind": "grunge_map_013",
+      "inputs": []
+    },
+    {
+      "uid": "1294800690",
+      "kind": "gradient",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294800452"
+        }
+      ]
+    },
+    {
+      "uid": "1294806362",
+      "kind": "mg_mask_builder_2",
+      "inputs": [
+        {
+          "socket": "curvature",
+          "node": "1294791219"
+        },
+        {
+          "socket": "ambient_occlusion",
+          "node": "1294280490"
+        },
+        {
+          "socket": "mask",
+          "node": "1294836756"
+        },
+        {
+          "socket": "grunge",
+          "node": "1294854913"
+        }
+      ]
+    },
+    {
+      "uid": "1294836756",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294742450"
+        },
+        {
+          "socket": "destination",
+          "node": "1294838375"
+        }
+      ]
+    },
+    {
+      "uid": "1294838375",
+      "kind": "fractal_sum_2",
+      "inputs": []
+    },
+    {
+      "uid": "1294854913",
+      "kind": "grunge_map_013",
+      "inputs": []
+    },
+    {
+      "uid": "1294860273",
+      "kind": "bnw_spots_2",
+      "inputs": []
+    },
+    {
+      "uid": "1294860324",
+      "kind": "histogram_range",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294860273"
+        }
+      ]
+    },
+    {
+      "uid": "1294860459",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294860324"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294738564"
+        },
+        {
+          "socket": "source",
+          "node": "1294951462"
+        }
+      ]
+    },
+    {
+      "uid": "1294860946",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294860459"
+        },
+        {
+          "socket": "source",
+          "node": "1294738744"
+        }
+      ]
+    },
+    {
+      "uid": "1294861041",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294860946"
+        },
+        {
+          "socket": "source",
+          "node": "1294806362"
+        }
+      ]
+    },
+    {
+      "uid": "1294861165",
+      "kind": "bnw_spots_2",
+      "inputs": []
+    },
+    {
+      "uid": "1294861172",
+      "kind": "histogram_scan",
+      "inputs": [
+        {
+          "socket": "Input_1",
+          "node": "1294177255"
+        }
+      ]
+    },
+    {
+      "uid": "1294861187",
+      "kind": "histogram_range",
+      "inputs": [
+        {
+          "socket": "input",
+          "node": "1294861165"
+        }
+      ]
+    },
+    {
+      "uid": "1294861196",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "source",
+          "node": "1294861172"
+        },
+        {
+          "socket": "destination",
+          "node": "1294861187"
+        }
+      ]
+    },
+    {
+      "uid": "1294861282",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294861196"
+        },
+        {
+          "socket": "source",
+          "node": "1294861041"
+        },
+        {
+          "socket": "opacity",
+          "node": "1294742450"
+        }
+      ]
+    },
+    {
+      "uid": "1294893879",
+      "kind": "replace_color",
+      "inputs": [
+        {
+          "socket": "Input",
+          "node": "1294734019"
+        }
+      ]
+    },
+    {
+      "uid": "1294898694",
+      "kind": "sharpen",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294861282"
+        }
+      ]
+    },
+    {
+      "uid": "1294898712",
+      "kind": "sharpen",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294800434"
+        }
+      ]
+    },
+    {
+      "uid": "1294951462",
+      "kind": "blend",
+      "inputs": [
+        {
+          "socket": "destination",
+          "node": "1294217226"
+        },
+        {
+          "socket": "source",
+          "node": "1294951480"
+        }
+      ]
+    },
+    {
+      "uid": "1294951480",
+      "kind": "uniform",
+      "inputs": []
+    },
+    {
+      "uid": "1295095973",
+      "kind": "replace_color",
+      "inputs": [
+        {
+          "socket": "Input",
+          "node": "1294800690"
+        }
+      ]
+    },
+    {
+      "uid": "1295112500",
+      "kind": "warp",
+      "inputs": [
+        {
+          "socket": "inputgradient",
+          "node": "1294217160"
+        },
+        {
+          "socket": "input1",
+          "node": "1294208390"
+        }
+      ]
+    },
+    {
+      "uid": "1311424996",
+      "kind": "rgba_merge",
+      "inputs": [
+        {
+          "socket": "R",
+          "node": "1311425012"
+        },
+        {
+          "socket": "G",
+          "node": "1311424997"
+        },
+        {
+          "socket": "B",
+          "node": "1311425012"
+        },
+        {
+          "socket": "A",
+          "node": "1311425012"
+        }
+      ]
+    },
+    {
+      "uid": "1311424997",
+      "kind": "invert_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1311425012"
+        }
+      ]
+    },
+    {
+      "uid": "1311424998",
+      "kind": "uniform",
+      "inputs": []
+    },
+    {
+      "uid": "1311424999",
+      "kind": "rgb-a_merge",
+      "inputs": [
+        {
+          "socket": "RGB",
+          "node": "1311425003"
+        },
+        {
+          "socket": "A",
+          "node": "1311425008"
+        }
+      ]
+    },
+    {
+      "uid": "1311425000",
+      "kind": "levels",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294898712"
+        }
+      ]
+    },
+    {
+      "uid": "1311425001",
+      "kind": "levels",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294280490"
+        }
+      ]
+    },
+    {
+      "uid": "1311425003",
+      "kind": "gradient",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1311425006"
+        }
+      ]
+    },
+    {
+      "uid": "1311425006",
+      "kind": "levels",
+      "inputs": []
+    },
+    {
+      "uid": "1311425008",
+      "kind": "invert_grayscale",
+      "inputs": [
+        {
+          "socket": "Source",
+          "node": "1311425016"
+        }
+      ]
+    },
+    {
+      "uid": "1311425009",
+      "kind": "levels",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294139909"
+        }
+      ]
+    },
+    {
+      "uid": "1311425010",
+      "kind": "levels",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294181118"
+        }
+      ]
+    },
+    {
+      "uid": "1311425012",
+      "kind": "rgba_split",
+      "inputs": [
+        {
+          "socket": "RGBA",
+          "node": "1311425010"
+        }
+      ]
+    },
+    {
+      "uid": "1311425014",
+      "kind": "rgba_merge",
+      "inputs": [
+        {
+          "socket": "R",
+          "node": "1311425001"
+        },
+        {
+          "socket": "A",
+          "node": "1311425009"
+        },
+        {
+          "socket": "B",
+          "node": "1311425016"
+        },
+        {
+          "socket": "G",
+          "node": "1311425006"
+        }
+      ]
+    },
+    {
+      "uid": "1311425015",
+      "kind": "rgba_merge",
+      "inputs": [
+        {
+          "socket": "R",
+          "node": "1311425001"
+        },
+        {
+          "socket": "A",
+          "node": "1311424998"
+        },
+        {
+          "socket": "B",
+          "node": "1311425016"
+        },
+        {
+          "socket": "G",
+          "node": "1311425006"
+        }
+      ]
+    },
+    {
+      "uid": "1311425016",
+      "kind": "levels",
+      "inputs": [
+        {
+          "socket": "input1",
+          "node": "1294898694"
+        }
+      ]
+    },
+    {
+      "uid": "1311425017",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425000"
+        }
+      ]
+    },
+    {
+      "uid": "1311425019",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425010"
+        }
+      ]
+    },
+    {
+      "uid": "1311425021",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311424996"
+        }
+      ]
+    },
+    {
+      "uid": "1311425023",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425016"
+        }
+      ]
+    },
+    {
+      "uid": "1311425025",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425006"
+        }
+      ]
+    },
+    {
+      "uid": "1311425027",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425001"
+        }
+      ]
+    },
+    {
+      "uid": "1311425029",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425009"
+        }
+      ]
+    },
+    {
+      "uid": "1311425031",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425015"
+        }
+      ]
+    },
+    {
+      "uid": "1311425033",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425014"
+        }
+      ]
+    },
+    {
+      "uid": "1311425035",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311424999"
+        }
+      ]
+    },
+    {
+      "uid": "1311425112",
+      "kind": "basecolor_metallic_roughness_converter",
+      "inputs": [
+        {
+          "socket": "basecolor",
+          "node": "1311425000"
+        },
+        {
+          "socket": "roughness",
+          "node": "1311425016"
+        },
+        {
+          "socket": "metallic",
+          "node": "1311425006"
+        },
+        {
+          "socket": "normal",
+          "node": "1311425010"
+        }
+      ]
+    },
+    {
+      "uid": "1311425332",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425112"
+        }
+      ]
+    },
+    {
+      "uid": "1311425358",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425112"
+        }
+      ]
+    },
+    {
+      "uid": "1311425391",
+      "kind": "compOutputBridge",
+      "inputs": [
+        {
+          "socket": "inputNodeOutput",
+          "node": "1311425112"
+        }
+      ]
+    }
+  ]
+}

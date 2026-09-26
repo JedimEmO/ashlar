@@ -1,0 +1,137 @@
+[workspace]
+resolver = "3"
+# The showcase content and the preview tool are workspace members so
+# `cargo check --workspace --all-targets` and `just ci` cover them; both set
+# `publish = false`.
+members = ["crates/*", "examples/*", "tools/*"]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.96"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/JedimEmO/ashlar"
+homepage = "https://github.com/JedimEmO/ashlar"
+authors = ["Mathias Myrland <jedimemo@gmail.com>"]
+
+[workspace.dependencies]
+# Members enable the Bevy features they need; the workspace pins the version.
+# `default-features = false` here is what keeps the layering honest: a crate
+# below the render layer that wants `bevy_render` has to say so in its own
+# Cargo.toml, where the choice can be reviewed.
+bevy = { version = "0.19.1", default-features = false }
+# The exact glam bevy_math 0.19.1 depends on. `ashlar` has no Bevy, but its
+# `DVec3` has to be the same type `bevy_math` re-exports, or every crate above
+# it converts at the boundary.
+glam = { version = "0.32.0", features = ["serde"] }
+
+serde = { version = "1.0.229", features = ["derive"] }
+ron = "0.12.2"
+thiserror = "2.0.20"
+anyhow = "1.0.104"
+# The preview writes and reads PNGs and nothing else; every other codec is size.
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+# `string` so the preview can build its `--scene` value list from a catalog at
+# runtime; without it clap only accepts `&'static str` possible values.
+clap = { version = "4.6.6", features = ["derive", "string"] }
+# Safe Rust bindings around the native Manifold solid kernel. Default features
+# off: the parallel backend pulls a second threading runtime that the mesher
+# does not need, and the build already compiles C++ on first use.
+manifold-csg = { version = "0.4.1", default-features = false }
+# Test-only. `default-features = false` with `std` drops the forking test
+# runner and its process plumbing, which a property test of pure geometry does
+# not need and which would otherwise re-exec the test binary per case.
+proptest = { version = "1.11.0", default-features = false, features = ["std"] }
+# Test-only. The KTX2 parser `bevy_image` already pins, used to read back the
+# files `ashlar-material` writes by hand; the version is Bevy 0.19.1's, so
+# `cargo deny`'s duplicate rule stays green.
+ktx2 = "0.5.0"
+# Test-only. Parses and validates the WGSL `ashlar-material` emits, so a shader
+# that would not compile is a test failure here rather than a black material in
+# the app. The version is the one Bevy 0.19.1's `bevy_render` already pins, so
+# `cargo deny`'s duplicate rule stays green; `wgsl-in` is the only front end
+# needed and every back end is left off.
+naga = { version = "29.0.4", default-features = false, features = ["wgsl-in"] }
+tempfile = "3.27.0"
+# The reference Zstandard encoder, behind `ashlar-material`'s `zstd` feature,
+# for the supercompression a KTX2 file's levels are stored under. Encoding is
+# the half no pure-Rust crate does well — `ruzstd`, which Bevy decodes with,
+# decodes only — so the writer side is the C library through `zstd-sys`, and it
+# is optional so that only the content steps that write assets compile it.
+# `default-features = false` drops the legacy-format decoder and the dictionary
+# builder, neither of which a level compressed on its own uses. The version is
+# the one Bevy 0.19.1's own `zstd_c` feature pins, so a game that turns that on
+# gets no second copy and `cargo deny`'s duplicate rule stays green.
+zstd = { version = "0.13.3", default-features = false }
+# The diagnostic line a library is allowed to print. A crate a game links must
+# not write to its stderr behind the game's back, and this workspace does not
+# enable Bevy's `bevy_log` feature — so the macros `bevy::prelude` would have
+# re-exported are not here, and the facade they forward to is. Subscribing is
+# the game's business: an app with no subscriber pays two atomic loads per call
+# site and prints nothing. `default-features = false` is what Bevy's own crates
+# ask for (`bevy_asset`, `bevy_ecs`), and the macros need nothing beyond it.
+# The version is the one Bevy 0.19.1 already pins, so `cargo deny`'s duplicate
+# rule stays green.
+tracing = { version = "0.1.44", default-features = false }
+
+# Internal crates. `path` is what the workspace builds against; `version` is
+# what a published crate records, and it keeps `cargo deny` from reading these
+# as wildcard dependencies.
+ashlar = { path = "crates/ashlar", version = "0.1.0" }
+ashlar-manifold = { path = "crates/ashlar-manifold", version = "0.1.0" }
+ashlar-material = { path = "crates/ashlar-material", version = "0.1.0" }
+ashlar-strands = { path = "crates/ashlar-strands", version = "0.1.0" }
+ashlar-surface = { path = "crates/ashlar-surface", version = "0.1.0" }
+ashlar-bevy = { path = "crates/ashlar-bevy", version = "0.1.0" }
+ashlar-content = { path = "crates/ashlar-content", version = "0.1.0" }
+# No `version`, unlike the others. Both are `publish = false`, and a version on
+# a path dependency is written into a packaged manifest, where crates.io then
+# cannot resolve it. Path-only dependencies are stripped at packaging time
+# instead. `deny.toml`'s `allow-wildcard-paths` covers the wildcard this leaves
+# in the graph.
+ashlar-showcase = { path = "examples/showcase" }
+ashlar-preview = { path = "tools/ashlar-preview" }
+
+# Bevy is slow in a plain dev profile; optimise dependencies.
+# Keep dev builds fast to run but small on disk: dependencies optimised, and
+# debuginfo limited to line tables.
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+opt-level = 3
+debug = false
+
+[profile.test]
+debug = "line-tables-only"
+
+# `ashlar-material` is the one workspace member with a per-texel inner loop: a
+# bake evaluates its whole expression a few million times, and its test suite
+# bakes dozens of times. Unoptimised that is measured at twenty-six times
+# slower — half a minute of CPU across every core for one run of the bake
+# tests, against a single second here — so it is optimised in dev and test
+# builds the way the dependencies above already are. Line tables still come
+# from `[profile.dev]`, so a backtrace still names a line.
+[profile.dev.package.ashlar-material]
+opt-level = 3
+
+# `ashlar-strands` is the same argument one crate along: placing a set is a
+# barycentric test per root per triangle, meshing it is a curve sampled per
+# strand, and a card atlas is a rasteriser. A repeat of the benchmark lawn is a
+# quarter of a million of each, and the preview and the tests do it per chunk
+# per level.
+[profile.dev.package.ashlar-strands]
+opt-level = 3
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+needless_pass_by_value = "allow"
+type_complexity = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+unwrap_used = "warn"

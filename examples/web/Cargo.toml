@@ -1,0 +1,90 @@
+[package]
+name = "ashlar-web"
+description = "The explorable demo: baked ashlar scenes and live material bakes, natively and in a browser."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+# `content` is the native half: the content step that writes what the app
+# loads, which needs the geometry kernel and so can never reach a browser. The
+# app itself compiles without it, and `trunk` builds the app alone.
+[features]
+default = []
+content = ["dep:ashlar-showcase", "dep:ashlar-content", "dep:anyhow", "dep:ron"]
+
+[dependencies]
+# The game path, plus `runtime-bake` for the one thing a game does not do: the
+# material panel re-bakes a graph whenever a slider moves. That is a tool's
+# cost, paid on purpose, and it is what the demo is for.
+ashlar-bevy = { workspace = true, features = ["runtime-bake"] }
+ashlar-material.workspace = true
+ashlar.workspace = true
+# A lean Bevy: the 3D renderer, bloom, KTX2 with its zstd decoder, windowing
+# and input. No audio, glTF, scenes, animation or picking, all of which would
+# be download size for nothing. `webgl2` because it is what every browser
+# draws; `x11` and `wayland` so the same app opens a window on Linux.
+bevy = { workspace = true, features = [
+    "std",
+    "async_executor",
+    "multi_threaded",
+    "bevy_asset",
+    "bevy_log",
+    "bevy_winit",
+    "bevy_window",
+    "bevy_render",
+    "bevy_core_pipeline",
+    "bevy_pbr",
+    "bevy_light",
+    "bevy_mikktspace",
+    "bevy_post_process",
+    "bevy_anti_alias",
+    "hdr",
+    "ktx2",
+    "zstd_rust",
+    "png",
+    "tonemapping_luts",
+    "webgl2",
+    "x11",
+    "wayland",
+    "mouse",
+    "keyboard",
+    "touch",
+] }
+# The side panel. `bevy_egui` rather than Bevy's own widgets because a slider,
+# a checkbox, a combo box and a hyperlink are one line each, and a panel of
+# them is the whole interface; its default features add clipboard, picking and
+# Bevy UI integration, none of which a panel over a 3D view needs.
+bevy_egui = { version = "0.42.0", default-features = false, features = [
+    "render",
+    "default_fonts",
+    "open_url",
+] }
+tracing.workspace = true
+# Decode shared links with standard URL form rules, including encoded colours.
+form_urlencoded = "1.2"
+# A baked building travels gzipped (see `catalog::DemoScene::path`), and the
+# app inflates it as it loads. The pure-Rust backend, which `png` already
+# pulls into every Bevy build, so this is no new code in the browser.
+flate2 = { version = "1.1.10", default-features = false, features = ["rust_backend"] }
+
+# The content step's dependencies, behind `content`.
+ashlar-showcase = { workspace = true, optional = true }
+ashlar-content = { workspace = true, optional = true }
+anyhow = { workspace = true, optional = true }
+ron = { workspace = true, optional = true }
+
+# The page's query string, which picks the first scene and the lighting, so a
+# link can open the demo on one view.
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-sys = { version = "0.3", features = ["Window", "Location"] }
+
+[[example]]
+name = "content"
+path = "examples/content.rs"
+required-features = ["content"]
+
+[lints]
+workspace = true

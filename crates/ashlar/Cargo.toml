@@ -1,0 +1,31 @@
+[package]
+name = "ashlar"
+description = "Style-independent architectural recipes and builders. No Bevy or IO."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation = "https://docs.rs/ashlar"
+readme = "README.md"
+keywords = ["procedural", "architecture", "geometry", "gamedev"]
+categories = ["game-development", "graphics"]
+
+[dependencies]
+# The material vocabulary: definitions, surfaces, bindings. Re-exported whole,
+# so a caller of this crate names `ashlar::MaterialLibrary` as it always did.
+ashlar-surface.workspace = true
+glam.workspace = true
+# The baked building file's manifest: the recipe and each level's structure,
+# readable and diffable, beside a binary table of meshes.
+ron.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true

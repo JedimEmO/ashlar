@@ -1,0 +1,102 @@
+# cargo-deny configuration. Run with `cargo deny check`.
+
+[graph]
+all-features = true
+
+[licenses]
+# Permissive only, and explicit: a new licence in the tree should fail the
+# build and be added here deliberately rather than slip in with a dependency
+# bump. ashlar itself is MIT OR Apache-2.0 and must stay linkable by games
+# that ship closed-source.
+version = 2
+allow = [
+    "MIT",
+    "MIT-0",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Zlib",
+    "CC0-1.0",
+    "Unicode-3.0",
+    "Unlicense",
+]
+confidence-threshold = 0.9
+# egui's bundled fonts, which the web demo's panel draws with: Ubuntu and the
+# emoji and icon fonts, under their own font licences. Nothing a published
+# crate links; `examples/web` is `publish = false`.
+exceptions = [
+    { crate = "epaint_default_fonts", allow = ["OFL-1.1", "Ubuntu-font-1.0"] },
+]
+
+[bans]
+# Deny, not warn: a warning on every run is noise nobody reads, and the point
+# of this check is to catch the duplicate that ashlar itself introduces (a
+# second `glam`, `image` or `serde` in the graph) the moment it lands. Every
+# duplicate that exists today comes in through Bevy 0.19.1's platform stack
+# and nothing here can move it: `cargo update --dry-run` is empty, and
+# `cargo tree -i <crate>@<old version>` for each one ends in winit, wgpu,
+# naga, the font stack, png or Bevy's proc macros. Those subtrees are skipped
+# below, each with the crate that owns the split. Revisit on every Bevy bump:
+# drop an entry, run `cargo deny check bans`, and keep it only if it is still
+# needed.
+multiple-versions = "deny"
+skip-tree = [
+    # Wayland, X11, Android and Apple windowing: thiserror 1 (calloop and
+    # smithay-client-toolkit), downcast-rs 1 (wayland-backend), ahash's
+    # getrandom 0.3, bitflags 1 (core-graphics, redox_syscall), objc2, block2,
+    # jni, rustix, linux-raw-sys and the windows-sys family.
+    { crate = "winit", reason = "Bevy's window layer; upstream owns every split under it" },
+    # gpu-descriptor still on hashbrown 0.15 and foldhash 0.1; windows-sys too.
+    { crate = "wgpu-hal", reason = "Bevy's GPU backend; upstream owns the split" },
+    # naga on codespan-reporting 0.13, naga_oil still on 0.12.
+    { crate = "naga_oil", reason = "Bevy's shader preprocessor lags naga's codespan-reporting" },
+    # parley and fontique on hashbrown 0.17 while Bevy's platform crate is on
+    # 0.16; skrifa, read-fonts and font-types split the same way.
+    { crate = "parley", reason = "Bevy's text stack; upstream owns the font crate versions" },
+    { crate = "accesskit_consumer", reason = "two versions behind Bevy's a11y and winit" },
+    # petgraph 0.8 pulls hashbrown 0.15 under bevy_reflect.
+    { crate = "petgraph", reason = "bevy_reflect's graph dependency lags hashbrown" },
+    # png depends on miniz_oxide 0.8 directly and on flate2, which is on 0.9.
+    { crate = "png", reason = "the PNG codec's own inflate split; the image crate cannot pick" },
+    # egui 0.36 on itertools 0.15 and guillotiere 0.7 (through vello) while
+    # Bevy 0.19 is on 0.14 and 0.6. Only the web demo's panel pulls it.
+    { crate = "egui", reason = "the web demo's UI; it runs a version ahead of Bevy on two crates" },
+]
+wildcards = "deny"
+# A path dependency with no version requirement reads as a wildcard. The ones
+# we have are `ashlar-showcase` and `ashlar-preview`, both `publish = false`
+# and both version-less so packaging strips them from dependent crates'
+# manifests. This
+# option permits wildcards only for path dependencies, which is exactly that
+# case; a wildcard on a registry crate still fails.
+allow-wildcard-paths = true
+
+[advisories]
+version = 2
+yanked = "deny"
+
+# One advisory id, not a crate-wide mute: a second advisory on `ttf-parser`
+# would still fail this check.
+#
+# RUSTSEC-2026-0192 is "unmaintained", not a vulnerability, and it is four
+# levels down a dependency nothing here chose. `cargo tree -i ttf-parser`
+# reads ttf-parser <- owned_ttf_parser <- ab_glyph <- sctk-adwaita <- winit
+# <- bevy_winit: it is winit's Wayland client-side window decorations, which
+# arrive through winit's default features and are not reachable from any API
+# this workspace calls. It is not Bevy's text stack, and no `cargo update`
+# moves off it because 0.25.1 is the last release there will be.
+#
+# The exit is winit dropping sctk-adwaita or Bevy pinning winit without its
+# default features; both are upstream. Review 2027-03-06: if Bevy has moved,
+# delete this entry, and if it has not, re-read the advisory before extending
+# the date rather than extending it on sight.
+ignore = [
+    { id = "RUSTSEC-2026-0192", reason = "winit's Wayland decorations, unmaintained but not vulnerable; upstream's to fix. Review 2027-03-06." },
+]
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

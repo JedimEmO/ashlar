@@ -1,0 +1,11 @@
+# The web build of the demo. `just site` runs `trunk build --release` here and
+# assembles the result with the content step's files, the manual and the API
+# docs under target/site; see examples/web/site/build.sh.
+[build]
+target = "index.html"
+# Under target/, like every other build product: nothing trunk writes belongs
+# in the repository.
+dist = "../../target/web/dist"
+# Relative, so the same build works at a domain's root, under a GitHub Pages
+# project path, and from `just site-serve`.
+public_url = "./"

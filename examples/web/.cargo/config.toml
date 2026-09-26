@@ -1,0 +1,18 @@
+# The profile the web build uses, which trunk asks for through `index.html`'s
+# `data-cargo-profile`. It lives here rather than in the workspace manifest
+# because only the browser build wants it, and cargo reads this file only for
+# commands run from this directory, which is where trunk runs cargo.
+#
+# Size over speed for everything but the bake: the module is a download, and
+# Bevy's renderer is most of it. The material crates keep the release
+# optimisation, because a slider's re-bake is the one hot loop a visitor waits
+# on.
+[profile.web-release]
+inherits = "release"
+opt-level = "s"
+
+[profile.web-release.package.ashlar-material]
+opt-level = 3
+
+[profile.web-release.package.ashlar-strands]
+opt-level = 3

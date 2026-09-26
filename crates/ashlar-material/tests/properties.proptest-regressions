@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 7969ea8167133af4f8996bedea46091e5ab441d9ffc3ed033b0f0eb4b29d959f # shrinks to graph = MaterialGraph { id: "test:generated", params: [Param { name: "wear", value: Float(0.5), range: Some((0.0, 1.0)), exposure: Bake }, Param { name: "tint", value: Color([0.5, 0.5, 0.5]), range: None, exposure: Bake }], nodes: {"a": Warp(Warp { source: Const(Float(0.05)), offset: Const(Color([0.05, 0.05, 0.05])), amount: 0.05 }), "b": Blend(Blend { mode: Overlay, a: Param("wear"), b: Const(Float(0.05)), opacity: Node("a") }), "c": Invert(Invert { input: Node("a") }), "d": Math(Math { op: Atan2, a: Param("wear"), b: Param("wear") })}, output: PbrOutput { base_color: Node("a"), roughness: Node("a"), metallic: Const(Float(0.0)), occlusion: Const(Float(1.0)), height: Some(Param("wear")), normal_strength: 0.05, emissive: Some(Node("a")) } }

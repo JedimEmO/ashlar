@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  # `RUSTFLAGS` from the environment REPLACES the `rustflags` in
+  # `.cargo/config.toml` rather than adding to them, so the target features that
+  # file sets have to be repeated here or every job would quietly build without
+  # them. Quietly is the problem: the bytes are identical either way, so the
+  # only symptom would be a slower CI and a claim in the README that CI had
+  # stopped checking. The runners are x86-64 and well past Haswell; a runner
+  # that is not would fail on SIGILL, which is at least loud.
+  RUSTFLAGS: -D warnings -C target-feature=+sse4.1,+fma
+
+jobs:
+  native:
+    name: Test (ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Bevy needs the first set on Linux. `cmake` and a C++ compiler are for
+      # `ashlar-manifold`: its first build clones and compiles upstream
+      # Manifold, which `cargo fetch` does not cache.
+      - name: Install Bevy and Manifold system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev pkg-config cmake
+
+      - uses: extractions/setup-just@v2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: native
+          cache-on-failure: true
+          # rust-cache keys on Cargo.lock and never rewrites an existing key;
+          # a profile change in Cargo.toml would otherwise restore stale
+          # artifacts forever and rebuild everything on every run.
+          key: ${{ hashFiles('**/Cargo.toml', 'rust-toolchain.toml') }}
+
+      - name: Format
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Test
+        run: cargo test --workspace
+
+      # The workspace build above unifies every feature, so the configurations
+      # a game actually compiles are never built by it: `ashlar-bevy` with no
+      # features (the game path), with `strands` alone (a game that grows grass
+      # off a baked set), `ashlar-material` without `zstd`, the content crate,
+      # and the template game. Each is checked and documented on its own, so a
+      # `cfg`'d item or an intra-doc link that only resolves with a tool
+      # feature on fails here rather than in a game.
+      - name: Game and tool configurations
+        run: just configs
+        env:
+          RUSTDOCFLAGS: -D warnings
+
+      # Broken intra-doc links are the failure this catches; the crates are
+      # published and the links are what a reader follows.
+      - name: Docs
+        run: cargo doc --workspace --no-deps
+        env:
+          RUSTDOCFLAGS: -D warnings
+
+      # Licences, advisories, banned crates and sources, from deny.toml.
+      # `just ci` runs the same thing, so a red branch here is reproducible
+      # locally with one command. An advisory that has been read and accepted
+      # is a dated, single-id `ignore` entry in deny.toml, not a skipped step.
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check

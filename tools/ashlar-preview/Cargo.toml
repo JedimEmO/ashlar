@@ -1,0 +1,55 @@
+[package]
+name = "ashlar-preview"
+description = "Interactive preview and reference gallery for ashlar building recipes."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[features]
+default = ["showcase"]
+# The library is content-agnostic: a downstream game builds its own catalog over
+# its own buildings and never compiles this. The bundled binary is the one
+# consumer that needs the example content, so it is the one thing behind a flag.
+showcase = ["dep:ashlar-showcase"]
+
+[dependencies]
+ashlar.workspace = true
+ashlar-manifold.workspace = true
+# The whole tool half of the adapter, and this is the tool it is for: the
+# preview bakes a graph in front of the first frame so an author sees the
+# material they just edited, compiles a `Shader` surface so a parameter drag
+# moves a wall between frames, grows the strand layers a definition asks for,
+# and uses the render device it already has to do the baking. A game enables
+# none of these and links none of them.
+ashlar-bevy = { workspace = true, features = [
+    "runtime-bake",
+    "gpu-bake",
+    "shader",
+    "strand-scatter",
+] }
+# The graph library beside a scene's material library: read, validated and
+# handed to the preflight.
+ashlar-material.workspace = true
+bevy = { workspace = true, features = ["default", "png"] }
+clap.workspace = true
+ron.workspace = true
+anyhow.workspace = true
+ashlar-showcase = { workspace = true, optional = true }
+
+[dev-dependencies]
+ashlar-showcase.workspace = true
+# `material-swatch` builds a height texture by hand; the library saves its
+# screenshots through the `image` Bevy already links with `png` on.
+image.workspace = true
+tempfile.workspace = true
+
+[[bin]]
+name = "ashlar-preview"
+path = "src/main.rs"
+required-features = ["showcase"]
+
+[lints]
+workspace = true

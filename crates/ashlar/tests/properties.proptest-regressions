@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc b383db51677c3e21f5815a3548ffb8f39aea840fd1c7f207ca59350fc2aa9c0c # shrinks to mesh = TriangleMesh { positions: [DVec3(0.0, 0.0, 0.0), DVec3(0.0, 0.0, 0.0), DVec3(0.0, 0.0, 0.0), DVec3(0.0, 0.0, 0.0), DVec3(0.0, 0.0, 0.0), DVec3(0.0, 0.0, 0.0), DVec3(0.0, 0.0, 0.0), DVec3(0.0, 0.0, 0.0), DVec3(0.0, 0.0, 0.0)], normals: [DVec3(1.0, 0.0, 0.0), DVec3(1.0, 0.0, 0.0), DVec3(1.0, 0.0, 0.0), DVec3(1.0, 0.0, 0.0), DVec3(1.0, 0.0, 0.0), DVec3(1.0, 0.0, 0.0), DVec3(1.0, 0.0, 0.0), DVec3(1.0, 0.0, 0.0), DVec3(1.0, 0.0, 0.0)], uvs: [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, 0.0]], indices: [0, 1, 2, 3, 4, 5, 6, 7, 8], sources: [FaceSource { operand: 0, origin: Body }, FaceSource { operand: 0, origin: Body }, FaceSource { operand: 0, origin: Body }] }

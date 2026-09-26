@@ -1,0 +1,83 @@
+name: Pages
+
+# The project site: the web demo, the manual and the API docs, built by
+# `just site` exactly as it is built locally and deployed to GitHub Pages.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time, and a newer push does not cancel one in flight:
+# a half-deployed site is worse than a site one commit behind.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+  # The recipe bounds every cargo invocation with this; a hosted runner has
+  # four cores.
+  CARGO_BUILD_JOBS: 4
+
+jobs:
+  build:
+    name: Build the site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # `cmake` and a C++ compiler for `ashlar-manifold`, which the content
+      # step meshes with: its first build clones and compiles upstream
+      # Manifold. The rest is Bevy's, for the native content step and docs.
+      - name: Install Bevy and Manifold system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev pkg-config cmake
+
+      - uses: extractions/setup-just@v2
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: pages
+          cache-on-failure: true
+          key: ${{ hashFiles('**/Cargo.toml', 'rust-toolchain.toml') }}
+
+      # Prebuilt binaries rather than `cargo install`, which would compile
+      # each from source on every run; binstall falls back to a source build
+      # if a release has none. Trunk fetches the wasm-bindgen that matches
+      # Cargo.lock, and wasm-opt, on its own.
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-binstall
+
+      - name: Install trunk and mdBook
+        run: cargo binstall --no-confirm trunk mdbook
+
+      - name: Build the site
+        run: just site
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: target/site
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

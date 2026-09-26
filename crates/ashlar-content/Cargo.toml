@@ -1,0 +1,33 @@
+[package]
+name = "ashlar-content"
+description = "The content step for ashlar: bake buildings and materials into the files a game ships."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation = "https://docs.rs/ashlar-content"
+readme = "README.md"
+keywords = ["procedural", "gamedev", "building", "material", "asset-pipeline"]
+categories = ["game-development"]
+
+[dependencies]
+ashlar.workspace = true
+ashlar-manifold.workspace = true
+# The content step writes supercompressed KTX2, so it is where the encoder is.
+ashlar-material = { workspace = true, features = ["zstd"] }
+ron.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+# `Content::review_pngs`: level 0 of each map as a PNG for a person to look at.
+# PNG only, as the workspace pins it, and `half` to read the emissive map's
+# half floats; both are already in any tree that links Bevy.
+image.workspace = true
+half = "2"
+# Unique files beside each destination keep concurrent content writes atomic.
+tempfile.workspace = true
+
+[lints]
+workspace = true
