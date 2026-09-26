@@ -77,9 +77,10 @@ anyhow = { workspace = true, optional = true }
 ron = { workspace = true, optional = true }
 
 # The page's query string, which picks the first scene and the lighting, so a
-# link can open the demo on one view.
+# link can open the demo on one view, and the pointer media query, which says
+# whether it is running on a phone.
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-web-sys = { version = "0.3", features = ["Window", "Location"] }
+web-sys = { version = "0.3", features = ["Window", "Location", "MediaQueryList"] }
 
 [[example]]
 name = "content"

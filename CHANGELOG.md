@@ -23,7 +23,10 @@ been released yet, so this section is the whole story so far.
   the way a game loads them, by day and by night, with orbit and walk cameras,
   a storey cut, the interior and a level-of-detail view; and a material stage
   whose graph parameters are sliders that re-bake in the browser, on one
-  thread. It runs natively too, for development.
+  thread. It runs natively too, for development. It streams pieces by
+  distance, so a browser's frame over the metropolis takes half the time it
+  did; it draws without shadows by night, and on a phone it draws less and
+  opens with its panel folded.
 - **Level bands that work on WebGL2**: `AshlarPlugin::bands`, `Bands::Auto`
   by default, cuts each level at the middle of its crossfade margin with an
   abrupt `VisibilityRange` on a render device that cannot crossfade one: Bevy

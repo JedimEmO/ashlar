@@ -10,10 +10,11 @@ use bevy::{
         touch::Touches,
     },
     prelude::*,
+    window::PrimaryWindow,
 };
 use bevy_egui::input::EguiWantsInput;
 
-use crate::View;
+use crate::{Quality, View};
 
 /// Registers the camera and its controls.
 pub(crate) fn plugin(app: &mut App) {
@@ -115,15 +116,15 @@ impl Rig {
         self.pitch = 0.04;
     }
 
-    /// The transform in orbit mode: looking at the focus, and stepped a
-    /// little to the left, so the focus sits right of centre in the part of
-    /// the window the panel does not cover.
-    fn orbit_transform(&self) -> Transform {
-        let mut transform =
-            Transform::from_translation(self.focus + self.direction() * self.distance)
-                .looking_at(self.focus, Vec3::Y);
+    /// The transform in orbit mode: looking at the focus from `stand` times
+    /// the distance, and stepped aside by `shift` of it, so the focus sits
+    /// right of centre in the part of the window the panel does not cover.
+    fn orbit_transform(&self, stand: f32, shift: f32) -> Transform {
+        let distance = self.distance * stand;
+        let mut transform = Transform::from_translation(self.focus + self.direction() * distance)
+            .looking_at(self.focus, Vec3::Y);
         let left = -transform.right();
-        transform.translation += left * self.distance * PANEL_SHIFT;
+        transform.translation += left * distance * shift;
         transform
     }
 
@@ -137,17 +138,28 @@ impl Rig {
 /// How far the orbit steps aside for the panel, as a share of its distance.
 const PANEL_SHIFT: f32 = 0.14;
 
+/// The narrowest window, in logical pixels, the panel sits beside the view in
+/// rather than over it. A phone held upright is about four hundred.
+pub(crate) const NARROW: f32 = 700.0;
+
 /// The camera entity.
 #[derive(Component)]
 pub(crate) struct MainCamera;
 
-fn spawn(mut commands: Commands) {
+fn spawn(mut commands: Commands, quality: Res<Quality>) {
     commands.spawn((
         MainCamera,
         Camera3d::default(),
         // Bloom and the night rig want HDR; by day it costs nothing visible.
         bevy::camera::Hdr,
-        Msaa::Sample4,
+        // At two or three device pixels to the CSS pixel a phone's edges are
+        // fine already, and four samples of every one of them are what its
+        // GPU can least afford.
+        if *quality == Quality::Handheld {
+            Msaa::Off
+        } else {
+            Msaa::Sample4
+        },
         Rig::default(),
         Transform::default(),
     ));
@@ -342,12 +354,26 @@ fn walk(
 
 /// Write the transform from the rig. Every frame, because it is one entity
 /// and the mode can change without the rig doing so.
-fn place(view: Res<View>, mut rigs: Query<(&Rig, &mut Transform)>) {
+///
+/// On a narrow window the panel lies over the view, folded, and the focus
+/// stays in the middle. On a window taller than it is wide the orbit stands
+/// further off: a scene is framed by the field of view, which is vertical, and
+/// held upright a phone sees half as much across as up.
+fn place(
+    view: Res<View>,
+    windows: Query<&Window, With<PrimaryWindow>>,
+    mut rigs: Query<(&Rig, &mut Transform)>,
+) {
+    let (width, height) = windows
+        .single()
+        .map_or((1.0, 1.0), |window| (window.width(), window.height()));
+    let shift = if width < NARROW { 0.0 } else { PANEL_SHIFT };
+    let stand = (height / width.max(1.0)).max(1.0).sqrt();
     for (rig, mut transform) in &mut rigs {
         *transform = if view.walk {
             rig.walk_transform()
         } else {
-            rig.orbit_transform()
+            rig.orbit_transform(stand, shift)
         };
     }
 }

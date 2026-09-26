@@ -8,7 +8,7 @@
 //! and only the ones nearest the camera are lit.
 use bevy::{light::CascadeShadowConfigBuilder, post_process::bloom::Bloom, prelude::*};
 
-use crate::{Mode, View, camera::MainCamera};
+use crate::{Mode, Quality, View, camera::MainCamera};
 
 /// Registers the rig.
 pub(crate) fn plugin(app: &mut App) {
@@ -54,6 +54,10 @@ const LIT_LAMPS: usize = 64;
 #[cfg(not(target_arch = "wasm32"))]
 const LIT_LAMPS: usize = 128;
 
+/// The most lamps lit at once on a phone, where every lit fragment loops over
+/// the lamps of its cluster: the street around the camera, and no further.
+const HANDHELD_LAMPS: usize = 16;
+
 /// The key light.
 #[derive(Component)]
 struct Key;
@@ -93,7 +97,7 @@ fn spawn(mut commands: Commands) {
 }
 
 /// Whether the renderer is WebGL2, which the browser build always is.
-const WEBGL2: bool = cfg!(target_arch = "wasm32");
+pub(crate) const WEBGL2: bool = cfg!(target_arch = "wasm32");
 
 /// How much the ambient is raised where there is no fill light.
 const NO_FILL_AMBIENT: f32 = 1.6;
@@ -114,6 +118,7 @@ fn rig(
     mut commands: Commands,
     mode: Res<Mode>,
     view: Res<View>,
+    quality: Res<Quality>,
     extent: Res<crate::scenes::Extent>,
     mut key: Query<(&mut DirectionalLight, Entity), (With<Key>, Without<Fill>)>,
     mut fill: Query<&mut DirectionalLight, (With<Fill>, Without<Key>)>,
@@ -138,6 +143,10 @@ fn rig(
     };
     for (mut light, entity) in &mut key {
         light.illuminance = illuminance;
+        // A shadow map draws the scene a second time, which in a browser is
+        // a third of the frame, and a moon's shadows are the one thing the
+        // night rig shows least. A phone draws none.
+        light.shadow_maps_enabled = !(*quality == Quality::Handheld || (night && WEBGL2));
         // Moonlight is sunlight, but the eye reads it cold.
         light.color = if night {
             Color::srgb(0.62, 0.72, 1.0)
@@ -185,6 +194,7 @@ const REBUDGET: f32 = 0.25;
 fn budget_lamps(
     mode: Res<Mode>,
     view: Res<View>,
+    quality: Res<Quality>,
     time: Res<Time>,
     mut since: Local<f32>,
     camera: Query<&GlobalTransform, With<MainCamera>>,
@@ -204,7 +214,12 @@ fn budget_lamps(
         .map(|(entity, at, _)| (at.translation().distance_squared(eye), entity))
         .collect();
     near.sort_by(|a, b| a.0.total_cmp(&b.0));
-    near.truncate(if night { LIT_LAMPS } else { 0 });
+    let lit = match (night, *quality) {
+        (false, _) => 0,
+        (true, Quality::Full) => LIT_LAMPS,
+        (true, Quality::Handheld) => HANDHELD_LAMPS,
+    };
+    near.truncate(lit);
     for (entity, _, mut visibility) in &mut lamps {
         let lit = near.iter().any(|(_, lamp)| *lamp == entity);
         visibility.set_if_neq(if lit {

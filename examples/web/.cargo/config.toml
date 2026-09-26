@@ -3,10 +3,13 @@
 # because only the browser build wants it, and cargo reads this file only for
 # commands run from this directory, which is where trunk runs cargo.
 #
-# Size over speed for everything but the bake: the module is a download, and
-# Bevy's renderer is most of it. The material crates keep the release
-# optimisation, because a slider's re-bake is the one hot loop a visitor waits
-# on.
+# Size over speed for everything but the two hot loops: the module is a
+# download, and Bevy's renderer is most of it. The material crates keep the
+# release optimisation, because a slider's re-bake is the one loop a visitor
+# waits on; and so does the frame's per-entity path, which in a browser is one
+# thread with no GPU culling: the ECS, visibility, extraction, batching and the
+# GL backend. Measured 2026-09-26 on the metropolis, those crates at 3 draw a
+# frame 10-13% faster for 1.2 MB more of gzipped module (10.1 MB to 11.3 MB).
 [profile.web-release]
 inherits = "release"
 opt-level = "s"
@@ -15,4 +18,55 @@ opt-level = "s"
 opt-level = 3
 
 [profile.web-release.package.ashlar-strands]
+opt-level = 3
+
+[profile.web-release.package.bevy_ecs]
+opt-level = 3
+
+[profile.web-release.package.bevy_render]
+opt-level = 3
+
+[profile.web-release.package.bevy_pbr]
+opt-level = 3
+
+[profile.web-release.package.bevy_camera]
+opt-level = 3
+
+[profile.web-release.package.bevy_light]
+opt-level = 3
+
+[profile.web-release.package.bevy_core_pipeline]
+opt-level = 3
+
+[profile.web-release.package.bevy_transform]
+opt-level = 3
+
+[profile.web-release.package.bevy_mesh]
+opt-level = 3
+
+[profile.web-release.package.bevy_asset]
+opt-level = 3
+
+[profile.web-release.package.bevy_platform]
+opt-level = 3
+
+[profile.web-release.package.wgpu]
+opt-level = 3
+
+[profile.web-release.package.wgpu-core]
+opt-level = 3
+
+[profile.web-release.package.wgpu-hal]
+opt-level = 3
+
+[profile.web-release.package.encase]
+opt-level = 3
+
+[profile.web-release.package.hashbrown]
+opt-level = 3
+
+[profile.web-release.package.foldhash]
+opt-level = 3
+
+[profile.web-release.package.glam]
 opt-level = 3

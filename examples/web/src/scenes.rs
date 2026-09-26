@@ -22,10 +22,17 @@ use ashlar_bevy::prelude::{
 use bevy::{
     asset::{AssetLoader, LoadContext, io::Reader},
     camera::visibility::VisibilityRange,
+    ecs::entity_disabling::Disabled,
+    light::NotShadowCaster,
     prelude::*,
 };
 
-use crate::{LodView, Mode, View, camera::Rig, catalog, lighting::DAY_EMISSIVE, lighting::Lamp};
+use crate::{
+    LodView, Mode, View,
+    camera::Rig,
+    catalog,
+    lighting::{DAY_EMISSIVE, Lamp, WEBGL2},
+};
 
 /// Registers the scene half.
 pub(crate) fn plugin(app: &mut App) {
@@ -401,23 +408,30 @@ fn failed(roots: Query<&AshlarFailed, With<SceneRoot>>, mut status: ResMut<Statu
     }
 }
 
-/// Keep the material the plugin gave each new piece.
+/// Keep the material the plugin gave each new piece. In a browser, a piece
+/// seen from inside casts no shadow: the building's own walls already shade
+/// its rooms from the sun, and the shadow pass is a third of the frame.
 fn record(
     add: On<Add, AshlarPiece>,
     mut commands: Commands,
-    pieces: Query<&MeshMaterial3d<StandardMaterial>>,
+    pieces: Query<(&MeshMaterial3d<StandardMaterial>, &AshlarPiece)>,
 ) {
-    if let Ok(material) = pieces.get(add.entity) {
-        commands.entity(add.entity).insert(Kept {
+    if let Ok((material, piece)) = pieces.get(add.entity) {
+        let mut entity = commands.entity(add.entity);
+        entity.insert(Kept {
             material: material.0.clone(),
         });
+        if WEBGL2 && piece.side == ashlar::Side::Interior {
+            entity.insert(NotShadowCaster);
+        }
     }
 }
 
 /// The band the plugin gave a piece, kept so the forced-level view can take
-/// it off and put it back. A piece with none draws at every distance.
+/// it off and put it back, and so [`crate::streaming`] can group by it. A
+/// piece with none draws at every distance.
 #[derive(Component)]
-struct KeptRange(VisibilityRange);
+pub(crate) struct KeptRange(pub VisibilityRange);
 
 /// Keep the band the plugin gives each new piece. The plugin inserts it after
 /// spawning the piece, so this watches the range rather than the piece; a
@@ -475,15 +489,20 @@ fn apply_view(
     mut since: Local<f32>,
     added: Query<(), Added<Kept>>,
     camera: Query<&GlobalTransform, With<crate::camera::MainCamera>>,
-    mut pieces: Query<(
-        Entity,
-        &AshlarPiece,
-        &Kept,
-        Option<&KeptRange>,
-        &GlobalTransform,
-        &mut Visibility,
-        &mut MeshMaterial3d<StandardMaterial>,
-    )>,
+    // Streamed-out pieces too, so they come back cut and dressed as the view
+    // says.
+    mut pieces: Query<
+        (
+            Entity,
+            &AshlarPiece,
+            &Kept,
+            Option<&KeptRange>,
+            &GlobalTransform,
+            &mut Visibility,
+            &mut MeshMaterial3d<StandardMaterial>,
+        ),
+        Allow<Disabled>,
+    >,
 ) {
     *since += time.delta_secs();
     // The tint follows the camera: it shows the level drawn from here.
@@ -539,7 +558,7 @@ fn apply_view(
 fn apply_emission(
     view: Res<View>,
     added: Query<(), Added<Kept>>,
-    pieces: Query<&Kept>,
+    pieces: Query<&Kept, Allow<Disabled>>,
     grounds: Query<&MeshMaterial3d<StandardMaterial>, With<Ground>>,
     added_ground: Query<(), Added<Ground>>,
     mut original: ResMut<Emission>,

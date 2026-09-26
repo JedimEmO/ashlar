@@ -1,7 +1,7 @@
 //! The demo's entry point: options from the command line natively, and from
 //! the page's query string in a browser, so `?scene=city-alley&night=1` opens
 //! the demo on one view.
-use ashlar_web::{LodView, Options};
+use ashlar_web::{LodView, Options, Quality};
 
 /// Fold one `key`/`value` pair into the options. Both sources speak the same
 /// keys, so a native flag and a query parameter are one vocabulary.
@@ -45,6 +45,13 @@ fn set(options: &mut Options, key: &str, value: &str) -> Result<(), String> {
             }
         }
         "walk" => options.walk = value != "0" && value != "false",
+        "quality" => {
+            options.quality = match value {
+                "full" => Quality::Full,
+                "handheld" => Quality::Handheld,
+                _ => return Err(format!("quality wants full or handheld, not {value:?}")),
+            }
+        }
         "assets" => options.assets = Some(value.to_owned()),
         "screenshot" => options.screenshot = Some(value.to_owned()),
         _ => return Err(format!("unknown option {key:?}")),
@@ -82,24 +89,38 @@ fn options() -> Result<Options, String> {
     reason = "the native reader's signature, which can refuse a flag"
 )]
 fn options() -> Result<Options, String> {
-    let search = web_sys::window()
+    let window = web_sys::window();
+    let search = window
+        .as_ref()
         .and_then(|window| window.location().search().ok())
         .unwrap_or_default();
-    Ok(query_options(&search))
+    // A finger for a pointer is a phone or a tablet; a link's own `quality`
+    // is read after, so it wins.
+    let handheld = window
+        .and_then(|window| window.match_media("(pointer: coarse)").ok().flatten())
+        .is_some_and(|query| query.matches());
+    let mut options = Options {
+        quality: if handheld {
+            Quality::Handheld
+        } else {
+            Quality::Full
+        },
+        ..Options::default()
+    };
+    query_options(&mut options, &search);
+    Ok(options)
 }
 
 #[cfg(any(target_arch = "wasm32", test))]
-fn query_options(search: &str) -> Options {
-    let mut options = Options::default();
+fn query_options(options: &mut Options, search: &str) {
     for (key, value) in form_urlencoded::parse(search.trim_start_matches('?').as_bytes()) {
         if key == "assets" || key == "screenshot" {
             continue;
         }
-        if let Err(error) = set(&mut options, &key, &value) {
+        if let Err(error) = set(options, &key, &value) {
             tracing::warn!("{error}");
         }
     }
-    options
 }
 
 fn main() {
@@ -118,6 +139,7 @@ Usage: ashlar-web [OPTIONS]
   --interior          Hide exterior geometry
   --lod bands|tint|N   Show distance bands, tint levels, or force a level
   --walk              Start at street level
+  --quality NAME      Draw as for a desktop (full) or a phone (handheld)
   --assets PATH       Asset root (default: target/web/assets)
   --screenshot PATH   Capture a loaded frame and exit
   -h, --help          Show this help
@@ -148,8 +170,10 @@ mod tests {
 
     #[test]
     fn query_decodes_colours_and_repeated_overrides_and_ignores_native_paths() {
-        let options = query_options(
-            "?scene=city%2Dalley&param=color%3D0.2%2C0.3%2C0.4&param=wear%3D0.8&night&assets=%2Ftmp&screenshot=out.png",
+        let mut options = Options::default();
+        query_options(
+            &mut options,
+            "?scene=city%2Dalley&param=color%3D0.2%2C0.3%2C0.4&param=wear%3D0.8&night&assets=%2Ftmp&screenshot=out.png&quality=handheld",
         );
         assert_eq!(options.scene.as_deref(), Some("city-alley"));
         assert_eq!(
@@ -160,6 +184,7 @@ mod tests {
             ]
         );
         assert_eq!(options.night, Some(true));
+        assert_eq!(options.quality, Quality::Handheld);
         assert!(options.assets.is_none());
         assert!(options.screenshot.is_none());
     }

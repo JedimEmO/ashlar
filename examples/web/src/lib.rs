@@ -23,6 +23,7 @@ mod capture;
 mod gallery;
 mod lighting;
 mod scenes;
+mod streaming;
 mod ui;
 
 /// Which half of the demo is on screen.
@@ -46,6 +47,22 @@ pub enum LodView {
     Tint,
     /// One level at every distance.
     Force(usize),
+}
+
+/// How much the device the demo runs on can draw.
+///
+/// A phone runs the same app as a desktop on a slower thread and a smaller
+/// GPU, at two or three device pixels to each CSS pixel, so it draws less:
+/// no multisampling, no shadow map and fewer lamps. The browser picks
+/// [`Quality::Handheld`] where the primary pointer is a finger; `quality` in
+/// the query string, or `--quality` natively, overrides it.
+#[derive(Resource, Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum Quality {
+    /// Everything the rig has.
+    #[default]
+    Full,
+    /// A phone or a tablet.
+    Handheld,
 }
 
 /// What a visitor has chosen. The UI writes it; the systems that act on it
@@ -87,6 +104,8 @@ pub struct Options {
     pub lod: LodView,
     /// Start at street level, walking.
     pub walk: bool,
+    /// How much to draw.
+    pub quality: Quality,
     /// Where the asset root is. Natively this defaults to the staging
     /// directory `just site` writes; in a browser it is `assets` beside the
     /// page and cannot be changed.
@@ -155,6 +174,7 @@ pub fn app(options: Options) -> App {
         ..default()
     })
     .insert_resource(view)
+    .insert_resource(options.quality)
     .insert_resource(if options.material.is_some() {
         Mode::Materials
     } else {
@@ -164,6 +184,7 @@ pub fn app(options: Options) -> App {
         camera::plugin,
         lighting::plugin,
         scenes::plugin,
+        streaming::plugin,
         gallery::plugin(options.material.clone(), options.params.clone()),
         ui::plugin,
     ));

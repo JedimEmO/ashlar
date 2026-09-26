@@ -5,8 +5,8 @@ use bevy::prelude::*;
 use bevy_egui::{EguiContexts, EguiPrimaryContextPass, egui};
 
 use crate::{
-    LodView, Mode, View,
-    camera::Rig,
+    LodView, Mode, Quality, View,
+    camera::{NARROW, Rig},
     catalog,
     gallery::{BakeState, Gallery},
     scenes::{Load, Status, TINTS},
@@ -22,11 +22,17 @@ const MANUAL: &str = "../book/";
 const API: &str = "../api/ashlar/index.html";
 const REPOSITORY: &str = "https://github.com/JedimEmO/ashlar";
 
+/// The panel's width, in points, where the window has room for it.
+const PANEL_WIDTH: f32 = 300.0;
+
+/// The gap between the panel and the window's edges, in points.
+const MARGIN: f32 = 12.0;
+
 /// The panel's accent: the warm grey-gold of dressed sandstone.
 const ACCENT: egui::Color32 = egui::Color32::from_rgb(214, 178, 112);
 
 /// Dark, a little translucent, rounded, with the accent on what is selected.
-fn style(ctx: &egui::Context) {
+fn style(ctx: &egui::Context, quality: Quality) {
     let mut visuals = egui::Visuals::dark();
     visuals.window_fill = egui::Color32::from_rgba_unmultiplied(18, 20, 24, 232);
     visuals.window_stroke = egui::Stroke::new(1.0, egui::Color32::from_rgb(52, 56, 64));
@@ -39,6 +45,13 @@ fn style(ctx: &egui::Context) {
     ctx.all_styles_mut(|style| {
         style.spacing.item_spacing = egui::vec2(8.0, 6.0);
         style.spacing.slider_width = 150.0;
+        // A fingertip is about forty points across; a mouse needs a third of
+        // that.
+        if quality == Quality::Handheld {
+            style.spacing.interact_size.y = 32.0;
+            style.spacing.button_padding = egui::vec2(10.0, 6.0);
+            style.spacing.item_spacing = egui::vec2(10.0, 8.0);
+        }
     });
 }
 
@@ -60,21 +73,35 @@ fn panel(
     status: Res<Status>,
     gallery: Option<ResMut<Gallery>>,
     mut rigs: Query<&mut Rig>,
+    quality: Res<Quality>,
     mut folded: Local<bool>,
+    mut was_narrow: Local<Option<bool>>,
 ) -> Result {
     let ctx = contexts.ctx_mut()?;
     if !*styled {
-        style(ctx);
+        style(ctx, *quality);
         *styled = true;
     }
+    let screen = ctx.content_rect();
+    // On a phone the panel lies over the view rather than beside it, so it
+    // folds to its first row whenever the window becomes narrow, and is as
+    // wide as the screen allows. Decided on a change rather than once: the
+    // first frames are drawn before a browser has said how big the page is.
+    let narrow = screen.width() < NARROW;
+    if *was_narrow != Some(narrow) {
+        *was_narrow = Some(narrow);
+        *folded = narrow;
+    }
+    let folded = &mut *folded;
+    let width = PANEL_WIDTH.min(screen.width() - 2.0 * MARGIN - 16.0);
     egui::Window::new("ashlar")
         .title_bar(false)
         .resizable(false)
-        .anchor(egui::Align2::LEFT_TOP, [12.0, 12.0])
-        .default_width(300.0)
-        .max_height(ctx.content_rect().height() - 24.0)
+        .anchor(egui::Align2::LEFT_TOP, [MARGIN, MARGIN])
+        .default_width(width)
+        .max_height(screen.height() - 2.0 * MARGIN)
         .show(ctx, |ui| {
-            ui.set_width(300.0);
+            ui.set_width(width);
             ui.horizontal(|ui| {
                 ui.label(
                     egui::RichText::new("ashlar")
@@ -85,7 +112,7 @@ fn panel(
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     // Folds the panel to this one row, for a small screen.
                     if ui
-                        .small_button(if *folded { "+" } else { "\u{2212}" })
+                        .button(if *folded { "+" } else { "\u{2212}" })
                         .on_hover_text(if *folded {
                             "Show the panel"
                         } else {
@@ -144,7 +171,7 @@ fn scenes(ui: &mut egui::Ui, view: &mut ResMut<View>, status: &Status, rigs: &mu
     heading(ui, "SCENE");
     let mut scene = view.scene;
     egui::ComboBox::from_id_salt("scene")
-        .width(280.0)
+        .width(ui.available_width())
         .selected_text(current.title)
         .show_ui(ui, |ui| {
             for (index, option) in catalog::SCENES.iter().enumerate() {
@@ -289,7 +316,7 @@ fn materials(ui: &mut egui::Ui, gallery: &mut Gallery) {
     heading(ui, "MATERIAL");
     let mut selected = gallery.selected.clone();
     egui::ComboBox::from_id_salt("material")
-        .width(280.0)
+        .width(ui.available_width())
         .height(360.0)
         .selected_text(title(&selected))
         .show_ui(ui, |ui| {
