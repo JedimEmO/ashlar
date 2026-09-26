@@ -60,7 +60,9 @@ jobs:
           tool: cargo-binstall
 
       - name: Install trunk and mdBook
-        run: cargo binstall --no-confirm trunk mdbook
+        # mdBook pinned to the 0.4 series the manual is built with locally; 0.5
+        # changed its configuration format.
+        run: cargo binstall --no-confirm trunk mdbook@0.4
 
       - name: Build the site
         run: just site

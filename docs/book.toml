@@ -3,7 +3,6 @@ title = "ashlar"
 description = "Procedural buildings and materials for Rust games: recipes, graphs, a content step and a Bevy plugin."
 authors = ["Mathias Myrland"]
 language = "en"
-multilingual = false
 # The manual is the docs folder itself, so every chapter reads the same on
 # GitHub and on the site.
 src = "."
